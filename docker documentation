@@ -1,0 +1,338 @@
+
+Docker_Documentation
+
+Definition of Docker 
+
+A Dockerfile series of instructions to build a docker image
+
+Docker is an open source software platform to create, deploy and manage virtualized application containers on a common operating system (OS), with an ecosystem of allied tools. Docker Inc., the company that originally developed Docker, supports a commercial edition and is the principal sponsor of the open source tool.
+
+Install docker in centos 6
+
+1. Verify Requirements
+For standard installation Docker required 64 bit operating system having Kernel >= 3.10 version. Older versions of Kernel have some missing requirements to run all features of Docker.
+# uname -r
+
+3.19.0-49-generic
+
+
+2. Add Docker Yum Repository
+Let’s add the Docker yum repository on your system. Create a new yum configuration file /etc/yum.repos.d/docker.repo
+
+# vim /etc/yum.repos.d/docker.repo
+
+
+and following contents.
+[Docker]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/$releasever/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+
+
+3. Install Docker
+First update all packages on your system using following command.
+
+# yum update
+
+
+Now install docker-engine package to install docker on your system. This is install many of required decencies on your system.
+
+# yum install docker-engine
+
+
+After successful installation of Docker engine, Let’s start the docker service.
+
+# service docker start
+
+
+4. Manage Docker Container
+Search Docker Images
+First of all search Docker container images from Docker hub. For example, below command will search all images with Ubuntu and list as output
+
+# docker search centos
+
+Output
+
+NAME                                   DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+centos                                 The official build of CentOS.                   3146      [OK]       
+jdeathe/centos-ssh                     CentOS-6 6.8 x86_64 / CentOS-7 7.3.1611 x8...   61                   [OK]
+jdeathe/centos-ssh-apache-php          CentOS-6 6.8 x86_64 - Apache / PHP-FPM / P...   25                   [OK]
+nimmis/java-centos                     This is docker images of CentOS 7 with dif...   23                   [OK]
+consol/centos-xfce-vnc                 Centos container with "headless" VNC sessi...   22                   [OK]
+gluster/gluster-centos                 Official GlusterFS Image [ CentOS-7 +  Glu...   18                   [OK]
+million12/centos-supervisor            Base CentOS-7 with supervisord launcher, h...   13                   [OK]
+torusware/speedus-centos               Always updated official CentOS docker imag...   8                    [OK]
+egyptianbman/docker-centos-nginx-php   A simple and highly configurable docker co...   6                    [OK]
+nathonfowlie/centos-jre                Latest CentOS image with the JRE pre-insta...   5                    [OK]
+centos/mariadb55-centos7                                                               4                    [OK]
+consol/sakuli-centos-xfce              Sakuli JavaScript based end-2-end testing ...   3                    [OK]
+centos/tools                           Docker image that has systems administrati...   2                    [OK]
+harisekhon/centos-scala                Scala + CentOS (OpenJDK tags 2.10-jre7 - 2...   2                    [OK]
+centos/redis                           Redis built for CentOS                          2                    [OK]
+harisekhon/centos-java                 Java on CentOS (OpenJDK, tags jre/jdk7-8)       2                    [OK]
+blacklabelops/centos                   CentOS Base Image! Built and Updates Daily!     1                    [OK]
+darksheer/centos                       Base Centos Image -- Updated hourly             1                    [OK]
+timhughes/centos                       Centos with systemd installed and running       1                    [OK]
+freenas/centos                         Simple CentOS Linux interactive container       1                    [OK]
+vcatechnology/centos                   A CentOS Image which is updated daily           0                    [OK]
+januswel/centos                        yum update-ed CentOS image                      0                    [OK]
+termbox/centos                         CentOS                                          0                    [OK]
+smartentry/centos                      centos with smartentry                          0                    [OK]
+repositoryjp/centos                    Docker Image for CentOS.                        0                    [OK]
+
+
+Help for Docker command
+
+# docker help
+
+Check Docker version
+# docker --version
+
+Check Docker info 
+
+This will show you several pieces of information about the OS.
+# docker info
+
+
+
+Start/Stop/Attach Container
+You can start, stop or attach to any containers with following commands. To start container use following command.
+#docker ps -a
+# docker start <CONTAINER ID>
+
+
+To stop container use following command.
+# docker stop <CONTAINER ID>
+
+
+To attach to currently running container use following command.
+# docker attach <CONTAINER ID>
+Download Docker Images for centos/Ubuntu 
+For ubuntu version
+
+#docker pull ubuntu:12.04
+
+For centos version
+
+#docker pull centos:centos6
+
+
+Work With Docker file
+
+
+[1]
+The format of Dockerfile is [INSTRUCTION arguments] .
+Refer to the following description for INSTRUCTION.
+INSTRUCTION
+Description
+FROM
+It sets the Base Image for subsequent instructions.
+MAINTAINER
+It sets the Author field of the generated images.
+RUN
+It will execute any commands when Docker image will be created.
+CMD
+It will execute any commands when Docker container will be executed.
+ENTRYPOINT
+It will execute any commands when Docker container will be executed.
+LABEL
+It adds metadata to an image.
+EXPOSE
+It informs Docker that the container will listen on the specified network ports at runtime.The EXPOSE command is used to publish ports of a docker container 
+ENV
+It sets the environment variable.
+ADD
+It copies new files, directories or remote file URLs.
+COPY
+It copies new files or directories.
+The differences of [ADD] are that it's impossible to specify remore URL and also it will not extract archive files automatically.
+VOLUME
+It creates a mount point with the specified name and marks it as holding externally mounted volumes from native host or other containers
+USER
+It sets the user name or UID.
+WORKDIR
+It sets the working directory.
+Run docker file from current docker file location
+Docker file using .(dot) as below command
+#docker build -t myimage:latest .
+
+Use Dockerfile and create Docker images automatically.               
+It is also useful for configuration management.
+
+
+[1]
+
+
+
+
+For example, Create a Dockerfile to install httpd and add index.html.
+
+[root@dlp ~]# vi Dockerfile
+# create new
+
+FROM centos
+MAINTAINER serverworld <admin@srv.world>
+RUN yum -y install httpd
+RUN echo "Hello DockerFile" > /var/www/html/index.html
+CMD which httpd
+
+
+
+# build image ⇒ docker build -t [image name]:[tag] 
+
+[root@dlp ~]# docker build -t serverworld/httpd:v1.0 . 
+
+Sending build context to Docker daemon 10.24 kB
+Step 0 : FROM centos
+ ---> 7322fbe74aa5
+Step 1 : MAINTAINER serverworld <admin@srv.world>
+ ---> Running in fa5364b3d41f
+ ---> 57d8fd36b7f7
+.....
+.....
+Removing intermediate container 6c41d45193a7
+Successfully built 277e531b42be
+
+
+
+[root@dlp ~]# docker images 
+
+REPOSITORY          TAG         IMAGE ID          CREATED             VIRTUAL SIZE
+serverworld/httpd   v1.0        4085b96acc22      4 seconds ago       268.4 MB
+centos              latest      7322fbe74aa5      8 days ago          172.2 MB
+centos              7           7322fbe74aa5      8 days ago          172.2 MB
+centos              centos7     7322fbe74aa5      8 days ago          172.2 MB
+
+
+
+# execute without arguments, then the command specified by CMD is executed
+
+[root@dlp ~]# docker run serverworld/httpd:v1.0 
+
+/usr/sbin/httpd
+# execute with arguments, then the command specified by CMD is overwritten and the arguments is executed
+
+[root@dlp ~]# 
+docker run serverworld/httpd:v1.0 /usr/bin/cat /var/www/html/index.html 
+
+Hello DockerFile
+
+
+
+Using Below command to run the container
+
+docker run -t -i busybox
+
+provided -i -t as the parameters to the run command and this means that it is interactive and attaches the tty input.
+
+Using this command we can remove docker image
+# docker rmi  <IMAGE ID>
+# docker images
+
+Using this command we can remove docker container
+
+#docker rm  <CONTAINER ID>
+#docker ps -a
+
+Remove container from exited status
+
+docker rm $(docker ps -a -q -f status=exited)
+
+Using This we can stop running container
+
+#docker stop $(docker ps -a -q)
+Using This we can remove running container
+
+#docker rm $(docker ps -a -q)
+
+Using This we can build the container
+#docker build -t myimage:latest .
+Using This we can run the container
+#docker run -t myimage:latest .
+
+Check python command direct through command
+# docker run docker.io/centos:centos6 /bin/bash -c "python --version"
+Interact with your container
+# docker run -i -t docker.io/centos:centos6 /bin/bash
+
+Commit a container using below command
+
+#docker commit <CONTAINER ID> busybox-1
+
+
+Rename the tag command
+#docker tag fdaf37cc2474  mydb/server:mongodb
+
+fdaf37cc2474 =  imagesID
+mydb/server   =  REPOSITORY
+Mongodb        =  tag
+
+Check docker log
+
+#docker logs  <container_name>
+
+Run container on 8081 port using below command
+ 
+#docker run -it -p 8081:80 my_image/centos_httpd /bin/bash
+
+Setting Resource limits for a docker container
+
+# docker run -it -c 256 -m 300M centos:centos7 /bin/bash
+
+Check Resource Consumption by Running Container#
+# docker stats
+
+
+
+######################################################################
+
+Local volume directory link to docker container directory
+
+docker run -e WORDPRESS_DB_USER=wpuser -e WORDPRESS_DB_PASSWORD=wpuser@ -e WORDPRESS_DB_NAME=wordpress_db -p 8081:80 -v /root/docker-wordpress/wordpress/html:/var/www/html --link wordpressdb:mysql --name wpcontainer -d docker110684/mywordpress:myweb
+###################################################################################################
+
+
+docker run -e MYSQL_ROOT_PASSWORD=sabseroot -e MYSQL_USER=wpuser -e MYSQL_PASSWORD=wpuser@ -e MYSQL_DATABASE=wordpress_db -v /root/docker-wordpress/wordpress/database:/var/lib/mysql --name wordpressdb -d docker110684/mymariadb:myweb
+
+#########################################################################################
+
+
+Docker Network
+
+
+Why use custom Network Subnet for Docker Networking?
+Docker container makes use of default subnet “172.17.0.0/16” for Networking. There may be many scenarios where we can’t use the default network due to some restrictions or in case subnet already used in the network.
+Lab Tasks
+In this quick session, we will change the network from default subnet “172.17.0.0/16” to “10.10.10.10/24“. The bridge interface remains to docker0  i.e. default.
+Configure the Custom Network: before doing changes for Docker Container, make sure stop the Docker service, then proceed further.
+Stop the Docker Service
+# systemctl stop docker.service
+Bring down the Docker bridge docker0
+# ip link set dev docker0 down
+Verify if IP forwarding is enabled, if not enable it in sysctl.conf
+# sysctl net.ipv4.conf.all.forwarding
+Update new subnet in the /etc/sysconfig/docker-network add the following to DOCKER_NETWORK_OPTIONS-:
+“–bip=YOUR.CIDR.ADDRESS/24”
+Example
+DOCKER_NETWORK_OPTIONS=”–bip=10.10.10.10/24″
+Remove default subnet’s MASQUERADE rules from the POSTROUTING chain in network iptables/firewalld service.
+# iptables -t nat -F POSTROUTING
+# iptables -F DOCKER
+Start Docker service
+# systemctl start docker.service
+Verify that the MASQUERADE rule has new subnet added to the POSTROUTING chain.
+# iptables -t nat -L n
+Validation
+Check the new subnet is on the bridge now.
+# docker network inspect bridge
+Check IP Address of the Container
+# docker inspect -f ‘{{ .NetworkSettings.IPAddress }}’ [Container ID]
+Run a docker container and check container have
+# docker run -it [Container Name] /bin/bash
+
+Docker run -it -p 22420:22 -d image name 
+
+
+
